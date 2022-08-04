@@ -1,0 +1,33 @@
+server {
+    listen 80 default_server;
+    listen [::]:80 default_server;
+
+    limit_conn conn_limit_per_ip 10;
+    limit_req zone=req_limit_per_ip burst=10 nodelay;
+
+    client_body_timeout 5s;
+    client_header_timeout 5s;
+    
+    root /var/www/html;
+    index index.html index.htm;
+
+    server_name _;
+    location / {
+        include  /etc/nginx/mime.types;
+        try_files $uri $uri/ =404;
+
+        limit_req zone=one;
+        limit_conn addr 5;
+
+        # if you need block some one ip or ip's
+        # deny 0.0.0.0;
+    }
+
+    location ~ \.css {
+        add_header  Content-Type    text/css;
+    }
+
+    location ~ \.js {
+        add_header  Content-Type    application/x-javascript;
+    }
+}

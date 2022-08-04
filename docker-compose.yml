@@ -1,0 +1,36 @@
+services:
+  attacker:
+    container_name: attacker
+    build: .
+    depends_on:
+      - defender
+      - dummy
+    links:
+      - defender
+      - dummy
+    tty: true
+    networks:
+      - cc
+  defender:
+    container_name: defender
+    build: ./defender
+    image: defender
+    ports:
+      - "9999:80"
+    volumes:
+      - "./content:/var/www/html"
+    networks:
+      - cc
+  dummy:
+    container_name: dummy
+    build: ./dummy
+    image: dummy
+    ports:
+      - "9998:80"
+    volumes:
+      - "./content:/var/www/html"
+    networks:
+      - cc
+
+networks:
+  cc:
